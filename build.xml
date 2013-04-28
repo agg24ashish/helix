@@ -1,0 +1,36 @@
+<project>
+    <target name="clean">
+        <delete dir="build"></delete>
+    </target>
+    
+    <target name="compile">
+            <mkdir dir="build"/>
+            <javac srcdir="java/main" destdir="build"/>
+            <javac srcdir="java/test" destdir="build"/>
+            
+            <javah  outputFile="src/helix.h" classpath="build">
+               <class name="org.helix.Server"/>
+            </javah>
+            
+            <antcall target="libhelix"/>
+            
+    </target>
+    
+    <target name="libhelix">
+        <exec executable="make" failonerror="true"/>
+        
+        <copy todir="build">
+          <fileset dir="obj">
+            <include name="libhelix.*"/>
+          </fileset>
+        </copy>
+    </target>
+    
+    <target name="test">
+            <java dir="build" classname="org.helix.Test" fork="true">
+                <jvmarg value="-Djava.library.path=./"/>
+            </java>
+    </target>
+    
+    
+</project>
